@@ -19,7 +19,6 @@ while task.wait(1) do
     end
 end
 
-
 --[[
 MapStart
 MapFinish
