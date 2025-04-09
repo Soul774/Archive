@@ -1,7 +1,9 @@
-local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/jensonhirst/Orion/refs/heads/main/source')))()
+
 local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
 local LocalPlayer = game:GetService("Players").LocalPlayer
+
 local function getFunctionFromLocalScript(functionName, script)
     for i,v in pairs(getgc()) do
         if typeof(v) == "function" then
@@ -91,6 +93,7 @@ local GunMods = Window:MakeTab({
 	PremiumOnly = false
 })
 
+local function nilFunction() end
 local oldFunction = nil;
 local function removeStamina()
     local team = LocalPlayer.PlayerGui:WaitForChild(getTeam(LocalPlayer),10)
@@ -126,6 +129,7 @@ Main:AddToggle({
 		removeStamina()
 	end    
 })
+
 coroutine.wrap(function()
 	while task.wait(0.05) do 
 		if not Toggles.Killaura then
@@ -135,7 +139,7 @@ coroutine.wrap(function()
 		if team == "Zombie" and isAlive(LocalPlayer) then
 			local entity = GetClosest("Survivors", LocalPlayer.Character.HumanoidRootPart.Position, 15)
 			if entity then
-				game:GetService("ReplicatedStorage").Events.Zombie.ClawAttacked:FireServer(entity.Humanoid, nil, nil, entity.Torso)
+				game:GetService("ReplicatedStorage").Events.Zombie.ClawAttacked:FireServer(entity.Humanoid, nil, nil, entity.Head)
 			end
 		elseif team  == "Survivor" and isAlive(LocalPlayer) then
 			local entity = GetClosest("Zombies", LocalPlayer.Character.HumanoidRootPart.Position, 15)
@@ -146,6 +150,7 @@ coroutine.wrap(function()
 		end
 	end
 end)()
+
 Main:AddToggle({
 	Name = "Killaura",
 	Default = false,
@@ -216,32 +221,22 @@ task.wait(2)
 _G.HeadSize = 10
 _G.TeamCheck = true
 _G.Disabled = true
+_G.TargetPart = "Head" -- Default mode
 
 function updateHitboxSize()
     for _, player in ipairs(game:GetService('Players'):GetPlayers()) do
         if player ~= game:GetService('Players').LocalPlayer then
-            if _G.TeamCheck and game:GetService('Players').LocalPlayer.Team ~= player.Team then
+            if _G.TeamCheck and game:GetService('Players').LocalPlayer.Team ~= player.Team or not _G.TeamCheck then
                 pcall(function()
-                    local head = player.Character and player.Character:FindFirstChild("Head")
-                    if head then
-                        head.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
-                        head.Transparency = 0.8
-                        head.BrickColor = BrickColor.new("White")
-                        head.Material = Enum.Material.Neon
-                        head.CanCollide = false
-                        head.Massless = true
-                    end
-                end)
-            elseif not _G.TeamCheck then
-                pcall(function()
-                    local head = player.Character and player.Character:FindFirstChild("Head")
-                    if head then
-                        head.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
-                        head.Transparency = 0.7
-                        head.BrickColor = BrickColor.new("Dark green")
-                        head.Material = Enum.Material.Neon
-                        head.CanCollide = false
-                        head.Massless = true
+                    local character = player.Character
+                    local targetPart = character and character:FindFirstChild(_G.TargetPart)
+                    if targetPart then
+                        targetPart.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
+                        targetPart.Transparency = 0.7
+                        targetPart.BrickColor = BrickColor.new(_G.TeamCheck and "Grey" or "Dark green")
+                        targetPart.Material = Enum.Material.Neon
+                        targetPart.CanCollide = false
+                        targetPart.Massless = true
                     end
                 end)
             end
@@ -249,16 +244,27 @@ function updateHitboxSize()
     end
 end
 
-game:GetService('UserInputService').InputBegan:Connect(function(input)
+game:GetService('UserInputService').InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+
     if _G.Disabled then
         if input.KeyCode == Enum.KeyCode.Z then
-            _G.HeadSize = math.min(_G.HeadSize + 1, 20) -- Increase head size, ensuring it doesn't exceed the maximum
+            _G.HeadSize = math.min(_G.HeadSize + 1, 20)
             updateHitboxSize()
-            print(_G.HeadSize)
+            print("Size:", _G.HeadSize)
         elseif input.KeyCode == Enum.KeyCode.X then
-            _G.HeadSize = math.max(_G.HeadSize - 1, 1) -- Decrease head size, ensuring it doesn't go below 1
+            _G.HeadSize = math.max(_G.HeadSize - 1, 1)
             updateHitboxSize()
-            print(_G.HeadSize)
+            print("Size:", _G.HeadSize)
+        elseif input.KeyCode == Enum.KeyCode.G then
+            if _G.TargetPart == "Head" then
+                _G.TargetPart = "Torso"
+                print("Switched to Torso mode")
+            else
+                _G.TargetPart = "Head"
+                print("Switched to Head mode")
+            end
+            updateHitboxSize()
         end
     end
 end)
@@ -269,6 +275,6 @@ game:GetService('RunService').RenderStepped:Connect(function()
     end
 end)
 
-wait(2)
+task.wait(2)
 
 loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
