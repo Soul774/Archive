@@ -14,10 +14,10 @@ SetWinDelay, -1
 SetBatchLines, -1
  
 mh := new mouseHook("AD")
-Toggle := false  ; Toggle state
-Hook := false    ; Hook state
+Toggle := false
+Hook := false
 
-; Toggle bind to C
+; "C" To toggle
 ~*c::
     Toggle := !Toggle
     if (Toggle && !Hook)
@@ -67,8 +67,7 @@ AD(h, x, y)
         }
     }
 }
- 
-;Helgef: https://www.autohotkey.com/boards/viewtopic.php?f=5&t=31144
+
 class mouseHook
 {
 	; User methods
@@ -114,4 +113,5 @@ class mouseHook
 			DllCall("GlobalFree", "Ptr", this.regCallBack)
 		return
 	}
+
 }
