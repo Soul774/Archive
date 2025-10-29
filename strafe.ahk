@@ -26,14 +26,14 @@ Hook := false
         MouseGetPos, xold
         mh.hook()
         Hook := True
-        ToolTip, Autostrafer Enabled
+        ToolTip, ON
     }
     else if (!Toggle && Hook)
     {
         mh.unhook()
         SendInput, {a Up}{d Up}
         Hook := False
-        ToolTip, Autostrafer Disabled
+        ToolTip, OFF
     }
     SetTimer, RemoveToolTip, -1000
 Return
@@ -115,3 +115,4 @@ class mouseHook
 	}
 
 }
+
