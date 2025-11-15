@@ -62,7 +62,7 @@ Gui Show
 return
 
 GuiClose:
-Gui Hide
+ExitApp
 return
 
 TrayExit:
