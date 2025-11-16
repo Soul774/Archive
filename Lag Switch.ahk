@@ -26,7 +26,7 @@ Gui Add, Button, x20  y70 w100 gApplySettings, Apply Settings
 Gui Add, Button, x130 y70 w100 gTestFreeze,    Test Freeze
 Gui Add, DropDownList, x20 y110 w100 vGuiMouseButton Choose2, XButton1|XButton2|MButton
 Gui Add, Text,  x20 y140 w250 vGuiStatus, %StatusBar%
-Gui Show, w310 h180, Evade.Freezer.Mouse.By.Discord.liiilillilliililli
+Gui Show, w310 h180, Roblox Freezer
 
 Menu Tray, NoStandard
 Menu Tray, Add, &Open GUI, TrayOpenGUI
@@ -132,3 +132,4 @@ return
 ; ------------------------------------------------------------------
 ^!r::Reload
 ^!x::ExitApp
+
